@@ -1,8 +1,7 @@
 import React from 'react';  
-import { Alert, View, Text, Button, TextInput, AsyncStorage } from 'react-native'; 
+import { Alert, AsyncStorage, Button, TextInput, View } from 'react-native'; 
 
 import styles from './Styles';
-import Note from './Note'
 
 export default class AddNoteScreen extends React.Component { 
   constructor(props){
@@ -17,14 +16,14 @@ export default class AddNoteScreen extends React.Component {
     try{
       let AsyncArray = await AsyncStorage.getItem('saved_notes');
       let parsed = JSON.parse(AsyncArray)
-      console.log({parsed})
-      let notes = this.state.notes.concat(parsed)
+      //console.log({parsed})
       this.setState({
-        notes: notes
+        notes: parsed
       })
+      this.addNote()
     }
     catch{
-      console.log('Error loading data')
+      Alert.alert('Error loading data')
     }
   }
   
@@ -45,7 +44,7 @@ export default class AddNoteScreen extends React.Component {
       newNote: ''
     })
 
-    console.log(JSON.stringify(notes));
+    //console.log(JSON.stringify(notes));
     AsyncStorage.setItem('saved_notes', JSON.stringify(notes));
 
     this.props.navigation.navigate("Notes");
@@ -56,33 +55,22 @@ export default class AddNoteScreen extends React.Component {
   }
   
   render(){
-    
     return(
       <View style={styles.addnoteview}>
-              <Button 
-                title="Save note" 
-                onPress={
-                  this.loadData,
-                  this.addNote}
-                />
-              <TextInput 
-                style={styles.inputtext} 
-                placeholder="Write a note here" 
-                placeholderTextColor='black' 
-                onChangeText={this.handleNoteChange} 
-                />
-                <Button 
-                style={styles.addnotebutton} 
-                title="Show Data" 
-                onPress= {this.loadData} 
-                />
-              {this.state.notes.map(note =>
-              <Note
-              key={note.id}
-              name={note.name}
-              id={note.id}
-              />)}
-            </View>
-        );
-       }
-    }
+        <TextInput 
+          style={styles.inputtext} 
+          placeholder="Write a note here" 
+          placeholderTextColor='black' 
+          onChangeText={
+            this.handleNoteChange
+            } 
+          />
+        <Button 
+          style={styles.addnotebutton} 
+          title="Save note" 
+          onPress= {this.loadData} 
+          />
+      </View>
+    );
+  }
+}
